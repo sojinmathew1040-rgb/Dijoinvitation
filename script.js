@@ -531,6 +531,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set default volume (soft and background-friendly)
         bgMusic.volume = 0.35;
 
+        // Force browser to start preloading/buffering the audio immediately
+        bgMusic.load();
+
         const playAudio = () => {
             bgMusic.play()
                 .then(() => {
@@ -549,19 +552,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const addInteractionListeners = () => {
             document.addEventListener('click', autoPlayOnInteraction);
             document.addEventListener('touchstart', autoPlayOnInteraction);
+            document.addEventListener('pointerdown', autoPlayOnInteraction);
+            document.addEventListener('mousedown', autoPlayOnInteraction);
+            document.addEventListener('keydown', autoPlayOnInteraction);
             window.addEventListener('scroll', autoPlayOnInteraction, { passive: true });
         };
 
         const removeInteractionListeners = () => {
             document.removeEventListener('click', autoPlayOnInteraction);
             document.removeEventListener('touchstart', autoPlayOnInteraction);
+            document.removeEventListener('pointerdown', autoPlayOnInteraction);
+            document.removeEventListener('mousedown', autoPlayOnInteraction);
+            document.removeEventListener('keydown', autoPlayOnInteraction);
             window.removeEventListener('scroll', autoPlayOnInteraction);
         };
 
-        // 1. Try to play immediately (works in some browsers/webviews if already interacted with site recently)
+        // 1. Try to play immediately (some browsers/webviews might allow it on load)
         playAudio();
 
-        // 2. Always listen for user interactions in case autoplay is blocked (standard browser behavior)
+        // 2. Always listen for user interactions in case autoplay is blocked (standard mobile behavior)
         addInteractionListeners();
     }
 });
