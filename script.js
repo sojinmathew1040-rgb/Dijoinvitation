@@ -523,5 +523,46 @@ document.addEventListener('DOMContentLoaded', () => {
             URL.revokeObjectURL(downloadUrl);
         });
     });
+
+    // --- 9. Invisible Autoplay Background Music Logic ---
+    const bgMusic = document.getElementById('bgMusic');
+
+    if (bgMusic) {
+        // Set default volume (soft and background-friendly)
+        bgMusic.volume = 0.35;
+
+        const playAudio = () => {
+            bgMusic.play()
+                .then(() => {
+                    console.log("Audio playing successfully.");
+                    removeInteractionListeners();
+                })
+                .catch(err => {
+                    console.log("Autoplay blocked or waiting for user interaction:", err.message);
+                });
+        };
+
+        const autoPlayOnInteraction = () => {
+            playAudio();
+        };
+
+        const addInteractionListeners = () => {
+            document.addEventListener('click', autoPlayOnInteraction);
+            document.addEventListener('touchstart', autoPlayOnInteraction);
+            window.addEventListener('scroll', autoPlayOnInteraction, { passive: true });
+        };
+
+        const removeInteractionListeners = () => {
+            document.removeEventListener('click', autoPlayOnInteraction);
+            document.removeEventListener('touchstart', autoPlayOnInteraction);
+            window.removeEventListener('scroll', autoPlayOnInteraction);
+        };
+
+        // 1. Try to play immediately (works in some browsers/webviews if already interacted with site recently)
+        playAudio();
+
+        // 2. Always listen for user interactions in case autoplay is blocked (standard browser behavior)
+        addInteractionListeners();
+    }
 });
 
