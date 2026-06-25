@@ -534,14 +534,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Force browser to start preloading/buffering the audio immediately
         bgMusic.load();
 
+        let isPlayAttempted = false;
+
         const playAudio = () => {
+            if (isPlayAttempted) return;
+            isPlayAttempted = true;
+
+            // Remove listeners immediately to prevent concurrent calls
+            removeInteractionListeners();
+
             bgMusic.play()
                 .then(() => {
                     console.log("Audio playing successfully.");
-                    removeInteractionListeners();
                 })
                 .catch(err => {
                     console.log("Autoplay blocked or waiting for user interaction:", err.message);
+                    isPlayAttempted = false;
+                    // Re-add interaction listeners in case the block was transient or requires a different gesture
+                    addInteractionListeners();
                 });
         };
 
@@ -552,22 +562,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const addInteractionListeners = () => {
             document.addEventListener('click', autoPlayOnInteraction);
             document.addEventListener('touchstart', autoPlayOnInteraction);
+            document.addEventListener('touchend', autoPlayOnInteraction);
             document.addEventListener('pointerdown', autoPlayOnInteraction);
             document.addEventListener('mousedown', autoPlayOnInteraction);
             document.addEventListener('keydown', autoPlayOnInteraction);
-            window.addEventListener('scroll', autoPlayOnInteraction, { passive: true });
         };
 
         const removeInteractionListeners = () => {
             document.removeEventListener('click', autoPlayOnInteraction);
             document.removeEventListener('touchstart', autoPlayOnInteraction);
+            document.removeEventListener('touchend', autoPlayOnInteraction);
             document.removeEventListener('pointerdown', autoPlayOnInteraction);
             document.removeEventListener('mousedown', autoPlayOnInteraction);
             document.removeEventListener('keydown', autoPlayOnInteraction);
-            window.removeEventListener('scroll', autoPlayOnInteraction);
         };
 
-        // 1. Try to play immediately (some browsers/webviews might allow it on load)
+        // 1. Try to play immediately (some desktop browsers/webviews might allow it on load)
         playAudio();
 
         // 2. Always listen for user interactions in case autoplay is blocked (standard mobile behavior)
