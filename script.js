@@ -459,4 +459,69 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleTopBarScroll, { passive: true });
     // Initial call to set correct visibility state on page load
     handleTopBarScroll();
+
+    // --- 8. Add to Calendar Dropdown Interactivity ---
+    const calendarDropdowns = document.querySelectorAll('.calendar-dropdown');
+    
+    calendarDropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('.btn-calendar-trigger');
+        if (trigger) {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+                const isExpanded = dropdown.classList.contains('active');
+                trigger.setAttribute('aria-expanded', isExpanded);
+            });
+        }
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', () => {
+        calendarDropdowns.forEach(dropdown => {
+            dropdown.classList.remove('active');
+            const trigger = dropdown.querySelector('.btn-calendar-trigger');
+            if (trigger) trigger.setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    // iCal / Apple Calendar / Outlook (.ics) Download Event Handler
+    const icalLinks = document.querySelectorAll('.ical-download-link');
+    icalLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Dijo and Anna Wedding//NONSGML Invitation//EN',
+                'CALSCALE:GREGORIAN',
+                'METHOD:PUBLISH',
+                'BEGIN:VEVENT',
+                'UID:dijo-anna-wedding-2026@dijoinvitation.vercel.app',
+                'DTSTAMP:20260625T120000Z',
+                'DTSTART;TZID=Asia/Kolkata:20260831T110000',
+                'DTEND;TZID=Asia/Kolkata:20260831T160000',
+                'SUMMARY:Wedding: Dijo & Anna',
+                'DESCRIPTION:You are cordially invited to celebrate the holy matrimony of Dijo J Perumalil and Anna Rajeev on Monday\\, August 31\\, 2026.\\n\\n11:00 AM: Holy Matrimony at St. Ann\'s Church\\, Kodikulam\\n12:30 PM: Wedding Reception %26 Lunch at St. Ann\'s Church Parish Hall',
+                'LOCATION:St. Ann\'s Church\\, Kodikulam\\, Thodupuzha\\, Kerala',
+                'STATUS:CONFIRMED',
+                'SEQUENCE:0',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+            const downloadUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = 'Dijo_Anna_Wedding.ics';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(downloadUrl);
+        });
+    });
 });
+
