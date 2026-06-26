@@ -674,6 +674,34 @@ p {
     margin-top: 0.25rem;
 }
 
+.ceremony-blessings {
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--color-border-gold);
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+}
+
+.ceremony-blessings strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--color-text-maroon);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    margin-top: 0.3rem;
+}
+
+.ceremony-blessings span {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-accent-gold);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.15rem;
+}
+
 .ceremonies-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
