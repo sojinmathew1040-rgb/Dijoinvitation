@@ -25,7 +25,36 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="loading-active">
+
+    <!-- 00. Premium Loading Screen Overlay -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <!-- Monogram / Wedding Initials -->
+            <div class="loading-monogram">
+                <span class="loading-initials">D & A</span>
+            </div>
+            
+            <h2 class="loading-title">Dijo & Anna</h2>
+            <p class="loading-subtitle">Holy Matrimony Invitation</p>
+            
+            <div class="loading-progress-container">
+                <div class="loading-progress-bar" id="loadingProgressBar"></div>
+                <div class="loading-percentage" id="loadingPercentage">0%</div>
+            </div>
+            
+            <button id="enter-btn" class="btn-enter-invitation" style="display: none;">
+                Open Invitation
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="arrow-icon">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Ambient Mouse Spotlight Backdrop -->
+    <div class="ambient-glow-backdrop" id="ambientGlowBackdrop"></div>
 
     <!-- Outer Frame for Traditional Haute Couture Editorial Look -->
     <div class="page-border"></div>

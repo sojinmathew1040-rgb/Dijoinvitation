@@ -16,6 +16,7 @@ const GOOGLE_FORM_CONFIG = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    let triggerMusicPlay = () => {};
 
     // --- 1. Falling Petals Animation System ---
     const petalsContainer = document.getElementById('petalsContainer');
@@ -48,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
         petal.classList.add('petal');
         activePetals++;
 
-        // Randomize dimensions (increased slightly for better rose petal readability)
-        const size = Math.random() * 12 + 10; // 10px to 22px
+        // Randomize dimensions to simulate 3D layers (Depth-of-Field)
+        const size = Math.random() * 22 + 8; // 8px to 30px
         petal.style.width = `${size}px`;
         petal.style.height = `${size}px`;
 
@@ -70,8 +71,27 @@ document.addEventListener('DOMContentLoaded', () => {
         petal.style.setProperty('--sway-x', swayX);
         petal.style.setProperty('--rotate-deg', rotateDeg);
 
-        // Randomize animation duration and delay
-        const duration = Math.random() * 6 + 6; // 6s to 12s (slightly slower, more floating effect)
+        // Layering depth properties based on size
+        let duration;
+        if (size > 22) {
+            // Foreground: Large, fast, blurry, above border/content
+            petal.style.filter = `blur(${Math.random() * 2 + 1.5}px)`;
+            petal.style.zIndex = '105';
+            petal.style.opacity = Math.random() * 0.3 + 0.3; // slightly transparent foreground
+            duration = Math.random() * 4 + 4; // 4s to 8s (falls faster)
+        } else if (size < 13) {
+            // Background: Small, slow, sharp, behind elements
+            petal.style.filter = 'none';
+            petal.style.zIndex = '5';
+            petal.style.opacity = Math.random() * 0.4 + 0.3;
+            duration = Math.random() * 6 + 8; // 8s to 14s (falls slower)
+        } else {
+            // Midground: Standard sizes, standard settings
+            petal.style.filter = Math.random() > 0.5 ? 'blur(0.5px)' : 'none';
+            petal.style.zIndex = '92';
+            petal.style.opacity = Math.random() * 0.4 + 0.5;
+            duration = Math.random() * 6 + 6; // 6s to 12s
+        }
         petal.style.animationDuration = `${duration}s`;
 
         // Append to background container
@@ -84,8 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }, duration * 1000);
     }
 
-    // Spawn petals at structured interval
-    const spawnInterval = setInterval(createPetal, 350);
+    // Setup petals but don't spawn them until the loading screen is dismissed
+    let spawnInterval;
+    function startPetals() {
+        if (!spawnInterval && petalsContainer) {
+            spawnInterval = setInterval(createPetal, 350);
+            // Spawn initial burst of petals for visual flare
+            for (let i = 0; i < 8; i++) {
+                setTimeout(createPetal, i * 150);
+            }
+        }
+    }
 
 
     // --- 2. Intersection Observer for Scroll Reveals ---
@@ -555,6 +584,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         };
 
+        triggerMusicPlay = playAudio;
+
         const autoPlayOnInteraction = () => {
             playAudio();
         };
@@ -583,5 +614,93 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Always listen for user interactions in case autoplay is blocked (standard mobile behavior)
         addInteractionListeners();
     }
+
+    // --- 10. Premium Loading Screen controller ---
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingProgressBar = document.getElementById('loadingProgressBar');
+    const loadingPercentage = document.getElementById('loadingPercentage');
+    const enterBtn = document.getElementById('enter-btn');
+    const progressContainer = document.querySelector('.loading-progress-container');
+
+    if (loadingScreen && loadingProgressBar && loadingPercentage && enterBtn) {
+        let progress = 0;
+        const totalDuration = 1200; // 1.2s for smooth loading
+        const stepTime = 15;
+        const increment = 100 / (totalDuration / stepTime);
+
+        const loadingInterval = setInterval(() => {
+            progress += increment;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(loadingInterval);
+
+                setTimeout(() => {
+                    progressContainer.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    progressContainer.style.opacity = '0';
+                    progressContainer.style.transform = 'translateY(-10px)';
+
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                        enterBtn.style.display = 'inline-flex';
+                    }, 400);
+                }, 300);
+            }
+            loadingProgressBar.style.width = `${progress}%`;
+            loadingPercentage.textContent = `${Math.floor(progress)}%`;
+        }, stepTime);
+
+        enterBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+
+            // Trigger music playback
+            if (typeof triggerMusicPlay === 'function') {
+                triggerMusicPlay();
+            }
+
+            // Dismiss loading screen overlay
+            loadingScreen.classList.add('fade-out');
+            document.body.classList.remove('loading-active');
+
+            // Start ambient effects
+            startPetals();
+
+            // Clean up DOM after transition
+            setTimeout(() => {
+                loadingScreen.remove();
+            }, 1000);
+        });
+    }
+
+    // --- 11. Mouse Reactive Spotlight Tracking (Ambient Glow) ---
+    window.addEventListener('mousemove', (e) => {
+        const backdrop = document.getElementById('ambientGlowBackdrop');
+        if (backdrop) {
+            backdrop.style.setProperty('--mouse-x', `${e.clientX}px`);
+            backdrop.style.setProperty('--mouse-y', `${e.clientY}px`);
+        }
+    });
+
+    // --- 12. Card 3D Tilt Micro-Animations ---
+    const tiltElements = document.querySelectorAll('.ceremony-card, .about-card, .rsvp-form-card');
+    tiltElements.forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left; // cursor horizontal offset inside card
+            const y = e.clientY - rect.top;  // cursor vertical offset inside card
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            // Adjust tilt rotation ratios: horizontal skew (rotateY), vertical skew (rotateX)
+            const rotateX = ((y - centerY) / centerY) * -4; // Max tilt 4 degrees
+            const rotateY = ((x - centerX) / centerX) * 4;
+            
+            el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px) scale(1.01)`;
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            el.style.transform = ''; // Smoothly returns to default CSS transform style
+        });
+    });
 });
 
