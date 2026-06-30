@@ -34,21 +34,33 @@
             <div class="loading-monogram">
                 <span class="loading-initials">D & A</span>
             </div>
-            
+
             <h2 class="loading-title">Dijo & Anna</h2>
             <p class="loading-subtitle">Holy Matrimony Invitation</p>
-            
+
             <div class="loading-progress-container">
                 <div class="loading-progress-bar" id="loadingProgressBar"></div>
                 <div class="loading-percentage" id="loadingPercentage">0%</div>
             </div>
-            
-            <button id="enter-btn" class="btn-enter-invitation" style="display: none;">
-                Open Invitation
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="arrow-icon">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
+
+            <button id="enter-btn" class="btn-enter-invitation lock-btn" style="display: none;"
+                aria-label="Scroll to Unlock">
+                <div class="lock-wrapper">
+                    <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path class="lock-shackle" d="M7 10V7a5 5 0 0 1 10 0v3" />
+                        <rect class="lock-body" x="5" y="10" width="14" height="11" rx="2" />
+                        <circle cx="12" cy="15" r="1.5" />
+                        <path d="M12 16.5V19" />
+                    </svg>
+                </div>
+                <span class="lock-text">Scroll to Unlock</span>
+
+                <!-- Luxury bouncing chevron hint -->
+                <div class="scroll-indicator">
+                    <svg class="scroll-arrow" viewBox="0 0 24 24">
+                        <path d="M6 9l6 6 6-6"></path>
+                    </svg>
+                </div>
             </button>
         </div>
     </div>
@@ -267,7 +279,7 @@
                         Beloved daughter of<br>
                         <strong>Mr. Rajeev Luke</strong> (Thottumarickal)<br>
                         &amp;<br>
-                        <strong>Mrs. Reena Rajeev</strong>(Koickakudy)
+                        <strong>Mrs. Reena Rajeev</strong> (Koickakudy)
                     </div>
                 </div>
             </div>
